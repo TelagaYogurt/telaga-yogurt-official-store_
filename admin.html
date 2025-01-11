@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Tambah Produk</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: #4caf50;
+            color: rgba(255, 22, 22, 0.534);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .main {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        input,
+        button {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+        }
+        
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Laman Admin - Tambah Produk Baru</h1>
+    </div>
+    <div class="main">
+        <input type="text" id="product-name" placeholder="Nama Produk" />
+        <input type="text" id="product-price" placeholder="Harga" />
+        <input type="file" id="product-image" accept="image/*" />
+        <input type="text" id="product-flavor" placeholder="Rasa" />
+        <input type="text" id="product-quantity" placeholder="Jumlah" />
+        <button onclick="addProduct()">Tambah Produk</button>
+    </div>
+    <script>
+        function addProduct() {
+            const name = document.getElementById("product-name").value;
+            const price = document.getElementById("product-price").value;
+            const imageFile = document.getElementById("product-image").files[0];
+            const flavor = document.getElementById("product-flavor").value;
+            const quantity = document.getElementById("product-quantity").value;
+
+            if (name && price && imageFile && flavor && quantity) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageDataUrl = event.target.result;
+                    let products = JSON.parse(localStorage.getItem("products")) || [];
+                    products.push({
+                        name: name,
+                        price: parseInt(price),
+                        image: imageDataUrl,
+                        flavor: flavor,
+                        quantity: parseInt(quantity),
+                    });
+                    localStorage.setItem("products", JSON.stringify(products));
+                    alert("Produk berhasil ditambahkan!");
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                alert("Silakan isi semua bidang!");
+            }
+        }
+    </script>
+</body>
+
+</html>

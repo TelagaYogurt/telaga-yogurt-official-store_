@@ -1,0 +1,26 @@
+[
+  {
+    "flavor": "Stroberi",
+    "name": "Yogurt Stroberi",
+    "price": 6000,
+    "image": "yogurt rasa stroberi.jpg"
+  },
+  {
+    "flavor": "Leci",
+    "name": "Yogurt Leci",
+    "price": 6000,
+    "image": "yogurt rasa leci.jpg"
+  },
+  {
+    "flavor": "Anggur",
+    "name": "Yogurt Anggur",
+    "price": 6000,
+    "image": "yogurt rasa anggur.jpg"
+  },
+  {
+    "flavor": "Melon",
+    "name": "Yogurt Melon",
+    "price": 6000,
+    "image": "yogurt rasa melon.jpg"
+  }
+]

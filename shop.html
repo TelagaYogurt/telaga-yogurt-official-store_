@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Belanja - TELAGA YOGURT</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: #559dc7;
+            color: rgba(255, 2, 2, 0.637);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+        
+        .nav a {
+            color: white;
+            padding: 14px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        
+        .main {
+            padding: 20px;
+        }
+        
+        .product {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .product img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        
+        .footer {
+            background-color: #4caf50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .search {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>TELAGA YOGURT</h1>
+    </div>
+    <div class="nav">
+        <a href="index.html">Beranda</a>
+        <a href="shop.html">Belanja</a>
+        <a href="account.html">Akun Saya</a>
+        <a href="cart.html">Keranjang</a>
+        <a href="login.html">Login</a>
+    </div>
+    <div class="main">
+        <h2>Belanja</h2>
+        <p>Jelajahi pilihan yogurt lezat kami.</p>
+        <div id="products" class="products">
+            <!-- Produk akan ditampilkan di sini -->
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2025 Toko Yogurt. Hak Cipta Dilindungi.</p>
+    </div>
+    <div class="search">
+        <input type="text" id="search-input" placeholder="Cari produk..." />
+        <button onclick="searchProducts()">Cari</button>
+    </div>
+    <script>
+        // Cek apakah ada data produk di Local Storage
+        const storedProducts = JSON.parse(localStorage.getItem("products"));
+        let products = storedProducts || [{
+            flavor: "stroberi",
+            name: "Yogurt Stroberi",
+            price: 6000,
+            image: "yogurt rasa stroberi.jpg",
+            quantity: 300,
+        }, {
+            flavor: "leci",
+            name: "Yogurt Leci",
+            price: 6000,
+            image: "yogurt rasa leci.jpg",
+            quantity: 300,
+        }, {
+            flavor: "melon",
+            name: "Yogurt rasa melon",
+            price: 6000,
+            image: "yogurt rasa melon.jpg",
+            quantity: 300,
+        }, {
+            flavor: "anggur",
+            name: "Yogurt anggur",
+            price: 6000,
+            image: "yogurt rasa anggur.jpg",
+            quantity: 300,
+        }, ];
+
+        function getProductColor(flavor) {
+            switch (flavor.toLowerCase()) {
+                case "stroberi":
+                    return "#ffcccc";
+                case "leci":
+                    return "#F5F5F5";
+                case "melon":
+                    return "#fff4cc";
+                case "anggur":
+                    return "#FFF0F5"
+                default:
+                    return "#ffffff";
+            }
+        }
+
+        function addToCart(name, price, image) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const existingProductIndex = cart.findIndex(
+                (product) => product.name === name
+            );
+
+            if (existingProductIndex !== -1) {
+                cart[existingProductIndex].quantity += 1;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    image,
+                    quantity: 1,
+                });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            alert(name + " telah ditambahkan ke keranjang.");
+        }
+
+        function searchProducts() {
+            const keyword = document
+                .getElementById("search-input")
+                .value.toLowerCase();
+            const filteredProducts = products.filter(
+                (product) =>
+                product.flavor.toLowerCase().includes(keyword) ||
+                product.name.toLowerCase().includes(keyword)
+            );
+
+            const productContainer = document.getElementById("products");
+            productContainer.innerHTML = "";
+
+            filteredProducts.forEach((product) => {
+                const productElement = document.createElement("div");
+                productElement.className = "product";
+                productElement.style.backgroundColor = getProductColor(
+                    product.flavor
+                );
+                productElement.innerHTML = `
+            <img src="${product.image}" alt="Yogurt ${product.flavor}">
+            <h3>Yogurt ${product.flavor}</h3>
+            <p>Harga: Rp ${product.price}</p>
+            <p>Jumlah: ${product.quantity}</p>
+            <button onclick="addToCart('${product.name}', ${product.price}, '${product.image}')">Tambah ke Keranjang</button>
+          `;
+                productContainer.appendChild(productElement);
+            });
+        }
+
+        function loadProducts() {
+            const productContainer = document.getElementById("products");
+            productContainer.innerHTML = "";
+
+            products.forEach((product) => {
+                const productElement = document.createElement("div");
+                productElement.className = "product";
+                productElement.style.backgroundColor = getProductColor(
+                    product.flavor
+                );
+                productElement.innerHTML = `
+            <img src="${product.image}" alt="Yogurt ${product.flavor}">
+            <h3>Yogurt ${product.flavor}</h3>
+            <p>Harga: Rp ${product.price}</p>
+            <p>Jumlah: ${product.quantity}</p>
+            <button onclick="addToCart('${product.name}', ${product.price}, '${product.image}')">Tambah ke Keranjang</button>
+          `;
+                productContainer.appendChild(productElement);
+            });
+        }
+
+        window.onload = function() {
+            loadProducts();
+        };
+    </script>
+</body>
+
+</html>

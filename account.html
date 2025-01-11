@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Akun Saya - TELAGA YOGURT</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .account-container {
+        text-align: center;
+        margin-top: 50px;
+      }
+
+      .account-container input,
+      .account-container button {
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+        width: 80%;
+      }
+
+      .account-container button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .account-container button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="account-container">
+      <h1>Akun Saya</h1>
+      <p>Masukkan nama dan alamat Anda</p>
+      <input type="text" id="user-name" placeholder="Nama" />
+      <input type="text" id="user-address" placeholder="Alamat" />
+      <button onclick="saveUserInfo()">Simpan</button>
+    </div>
+    <script>
+      const user = JSON.parse(localStorage.getItem("user")) || {};
+      document.getElementById("user-name").value = user.name || "";
+      document.getElementById("user-address").value = user.address || "";
+
+      function saveUserInfo() {
+        user.name = document.getElementById("user-name").value;
+        user.address = document.getElementById("user-address").value;
+        localStorage.setItem("user", JSON.stringify(user));
+        alert("Informasi akun berhasil disimpan!");
+      }
+    </script>
+  </body>
+</html>

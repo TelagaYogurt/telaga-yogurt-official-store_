@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keranjang Belanja - TELAGA YOGURT</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ff090996;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: #4c9baf;
+            color: rgba(241, 8, 8, 0.514);
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+        }
+        
+        .nav a {
+            color: white;
+            padding: 14px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        
+        .main {
+            padding: 20px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+            background-color: white;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .cart-item img {
+            max-width: 50px;
+            border-radius: 5px;
+        }
+        
+        .cart-item input {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .cart-total {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        
+        .cart-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #ddd;
+            padding: 10px 0;
+            margin-top: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .footer {
+            background-color: #4caf50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .order-notes {
+            margin-top: 20px;
+        }
+        
+        .order-notes textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Keranjang Belanja</h1>
+    </div>
+    <div class="nav">
+        <a href="index.html">Beranda</a>
+        <a href="shop.html">Belanja</a>
+        <a href="account.html">Akun Saya</a>
+        <a href="cart.html">Keranjang</a>
+        <a href="login.html">Login</a>
+    </div>
+    <div class="main">
+        <h2>Keranjang Belanja Anda</h2>
+        <div id="cart-items" class="cart-items">
+            <!-- Item keranjang akan ditampilkan di sini -->
+        </div>
+        <div class="cart-total" id="cart-total">
+            <!-- Total harga akan ditampilkan di sini -->
+        </div>
+        <div class="order-notes">
+            <h3>Keterangan Pembelian</h3>
+            <textarea id="order-notes-text" placeholder="Tambahkan keterangan pembelian..."></textarea>
+        </div>
+        <div class="cart-summary">
+            <button onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2025 TELAGA YOGURT. Hak Cipta Dilindungi.</p>
+    </div>
+    <script>
+        function loadCartItems() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const cartItemsContainer = document.getElementById("cart-items");
+            const cartTotalContainer = document.getElementById("cart-total");
+            cartItemsContainer.innerHTML = "";
+            let totalAmount = 0;
+
+            cart.forEach((item, index) => {
+                totalAmount += item.price * item.quantity;
+
+                const cartItemElement = document.createElement("div");
+                cartItemElement.className = "cart-item";
+                cartItemElement.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <span>${item.name}</span>
+            <span>Rp ${item.price}</span>
+            <div>
+              <button onclick="updateQuantity(${index}, ${
+            item.quantity - 1
+          })">-</button>
+              <input type="number" value="${
+                item.quantity
+              }" min="1" onchange="updateQuantity(${index}, this.value)">
+              <button onclick="updateQuantity(${index}, ${
+            item.quantity + 1
+          })">+</button>
+            </div>
+            <button onclick="removeItem(${index})">Hapus</button>
+          `;
+                cartItemsContainer.appendChild(cartItemElement);
+            });
+
+            cartTotalContainer.textContent = "Total: Rp " + totalAmount;
+        }
+
+        function updateQuantity(index, quantity) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            if (quantity < 1) quantity = 1;
+            cart[index].quantity = parseInt(quantity);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCartItems();
+        }
+
+        function removeItem(index) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCartItems();
+        }
+
+        function checkout() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const user = JSON.parse(localStorage.getItem("user")) || {
+                name: "Pelanggan",
+                address: "Alamat tidak tersedia",
+            };
+            const orderNotes = document.getElementById("order-notes-text").value;
+
+            if (cart.length === 0) {
+                alert("Keranjang belanja kosong!");
+                return;
+            }
+
+            let totalAmount = 0;
+            let orderDetails = `Pesanan Saya:\nNama: ${user.name}\nAlamat: ${user.address}\n\n`;
+
+            cart.forEach((item) => {
+                totalAmount += item.price * item.quantity;
+                orderDetails += `${item.name} - Rp ${item.price} x ${item.quantity}\n`;
+            });
+
+            orderDetails += `\nTotal: Rp ${totalAmount}\n\nKeterangan: ${orderNotes}`;
+
+            const whatsappNumber = "08587545687";
+            const whatsappMessage = encodeURIComponent(orderDetails);
+
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+            window.location.href = whatsappUrl;
+        }
+
+        window.onload = function() {
+            loadCartItems();
+        };
+    </script>
+</body>
+
+</html>
